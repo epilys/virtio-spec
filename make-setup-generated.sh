@@ -5,6 +5,13 @@ if [ x"$DATESTR" = x ]; then
     ISODATE=`git show --format=format:'%cd' --date=iso | head -n 1`
     DATESTR=`date -d "$DATE" +'%d %B %Y'`
 fi
+# PDF date values should be specified in the form “D:YYYYMMDDHHmmSSOHH ’mm’”
+# as described in the pdf reference manual [1, §3.8.3, “Dates”].
+# Adobe Systems Incorporated. PDF Reference Version 1.6. Adobe Press,
+# fifth edition, December 3, 2004. ISBN 0321304748.
+# <http://partners.adobe.com/public/developer/en/pdf/PDFReference16.pdf>
+# %D:YYYYMMDDHHmmSSOHH ’mm’
+PDFDATESTR=`date -d "$DATESTR" +"D:%Y%m%d000000000 '00'"`
 
 case "$1" in
     *-wd*)
@@ -55,6 +62,7 @@ cat > setup-generated.tex <<EOF
 % define VIRTIO Working Draft number and date
 \newcommand{\virtiorev}{$VERSION}
 \newcommand{\virtioworkingdraftdate}{$DATESTR}
+\newcommand{\virtioworkingdraftdatepdfformat}{$PDFDATESTR}
 \newcommand{\virtioworkingdraft}{$WORKINGDRAFT}
 \newcommand{\virtiodraftstage}{$STAGE}
 \newcommand{\virtiodraftstageextra}{$STAGEEXTRA}
